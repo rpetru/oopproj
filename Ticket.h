@@ -23,9 +23,9 @@ public:
 	}
 
 	Ticket(const Ticket& t) : ticketId(t.ticketId) {
-		this->setPrice(t.price);
-		this->setType(t.type);
-		this->setValidation(t.valid);
+		this->price = t.price;
+		this->type = t.type;
+		this->valid = t.valid;
 	}
 
 	~Ticket() {
