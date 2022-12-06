@@ -86,12 +86,64 @@ public:
 		if (tickets == nullptr) {
 			throw "provide valid array";
 		}
+		for (int i = 0; i < ticketNo; i++) {
+			if (tickets[i] <= 0) {
+				throw "invalid ticket id!";
+			}
+		}
 		delete[] this->ticketIds;
 		this->ticketIds = new int[ticketNo];
 		for (int i = 0; i < ticketNo; i++) {
 			this->ticketIds[i] = tickets[i];
 		}
 		this->ticketsBought = ticketNo;
+	}
+
+	void addTicket(int ticketid) {
+		int* tix = new int[this->ticketsBought + 1];
+		for (int i = 0; i < this->ticketsBought; i++) {
+			tix[i] = this->ticketIds[i];
+		}
+		tix[this->ticketsBought] = ticketid;
+		delete[] this->ticketIds;
+		this->ticketIds = tix;
+		this->ticketsBought++;
+	}
+
+	void dismissTicket(int ticketId) {
+		int index = -1;
+		for (int i = 0; i < this->ticketsBought; i++) {
+			if (this->ticketIds[i] == ticketId) {
+				index = i;
+			}
+		}
+		if (index == -1) {
+			cout << "No ticket with id " << ticketId << " found!";
+			return;
+		}
+		for (int i = index; i < this->ticketsBought - 1; i++) {
+			this->ticketIds[i] = this->ticketIds[i + 1];
+		}
+
+		int* tix = new int[this->ticketsBought - 1];
+		for (int i = 0; i < this->ticketsBought - 1; i++) {
+			tix[i] = this->ticketIds[i];
+		}
+		delete[] this->ticketIds;
+		this->ticketIds = tix;
+		this->ticketsBought--;
+	}
+
+	bool operator==(User u) {
+		return this->ticketsBought == u.ticketsBought;
+	}
+
+	User operator!() {
+		User copy = *this;
+		for (int i = 0; i < this->ticketsBought; i++) {
+			copy.ticketIds[i] = -1;
+		}
+		return copy;
 	}
 
 	void operator=(const User& u)
@@ -111,6 +163,8 @@ public:
 			this->ticketIds[i] = u.ticketIds[i];
 		}
 	}
+
+
 };
 
 int User::noUsers = 0;

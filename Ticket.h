@@ -79,6 +79,11 @@ public:
 		this->valid = 1;
 	}
 
+	Ticket operator++() {
+		this->price += this->price * 0.2;
+		return *this;
+	}
+
 	void operator=(const Ticket& t)
 	{
 		if (this == &t) {
@@ -91,7 +96,6 @@ public:
 	}
 
 	friend Ticket operator*(Ticket t, double perc);
-	friend Ticket operator*(double perc, Ticket t);
 };
 
 int Ticket::noTickets = 0;
@@ -99,12 +103,6 @@ int Ticket::noTickets = 0;
 Ticket operator*(Ticket t, double perc) {
 	Ticket result = t;
 	result.price += result.price * perc / 100;
-	return result;
-}
-
-Ticket operator*(double perc, Ticket t) {
-	Ticket result = t;
-	result.price +=  result.price * perc / 100;
 	return result;
 }
 

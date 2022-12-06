@@ -95,6 +95,40 @@ public:
 		this->rows = row;
 	}
 
+	void addRow(int row) {
+		int* rowz = new int[this->rows + 1];
+		for (int i = 0; i < this->rows; i++) {
+			rowz[i] = this->seatsPerRow[i];
+		}
+		rowz[this->rows] = row;
+		delete[] this->seatsPerRow;
+		this->seatsPerRow = rowz;
+		this->rows++;
+	}
+
+	int getTotalSeats() {
+		int total = 0;
+		for (int i = 0; i < this->rows; i++) {
+			total += this->seatsPerRow[i];
+		}
+		return total;
+	}
+
+	explicit operator int() {
+		return this->getTotalSeats();
+	}
+
+	int operator()(int indexStart, int indexEnd) {
+		if (indexStart < 0 || indexEnd < 0 || indexStart >= this->rows || indexEnd >= this->rows || indexEnd < indexStart) {
+			throw "invalid indexes";
+		}
+		int sum = 0;
+		for (int i = indexStart; i <= indexEnd; i++) {
+			sum += this->seatsPerRow[i];
+		}
+		return sum;
+	}
+
 	void operator=(const Event& e)
 	{
 		if (this == &e) {
@@ -110,12 +144,6 @@ public:
 			this->seatsPerRow[i] = e.seatsPerRow[i];
 		}
 	}
-
-
-
-	//freeRow
-	//addRow
-	//editRow
 };
 
 int Event::noEvents = 0;
