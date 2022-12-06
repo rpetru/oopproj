@@ -1,5 +1,7 @@
 #pragma once
-#include<iostream>
+#include <iostream>
+
+using namespace std;
 
 class User {
 	const int userId;
@@ -12,7 +14,7 @@ class User {
 	const static int MIN_ACCEPTED_AGE;
 
 public: 
-	User() : userId(-1) {
+	User() : userId(++noUsers) {
 
 	}
 
@@ -25,9 +27,11 @@ public:
 	User(const User& u) : userId(u.userId) {
 		this->name = u.name;
 		this->age = u.age;
-		this->ticketIds = new int[u.ticketsBought];
-		for (int i = 0; i < u.ticketsBought; i++) {
-			this->ticketIds[i] = u.ticketIds[i];
+		if (u.ticketIds != nullptr) {
+			this->ticketIds = new int[u.ticketsBought];
+			for (int i = 0; i < u.ticketsBought; i++) {
+				this->ticketIds[i] = u.ticketIds[i];
+			}
 		}
 		this->ticketsBought = u.ticketsBought;
 	}
@@ -49,11 +53,18 @@ public:
 	}
 
 	int* getTickets() {
+		if (this->ticketIds == nullptr) {
+			return nullptr;
+		}
 		int* copy = new int[this->ticketsBought];
 		for (int i = 0; i < this->ticketsBought; i++) {
 			copy[i] = this->ticketIds[i];
 		}
 		return copy;
+	}
+
+	int getId() {
+		return this->userId;
 	}
 
 	void setName(char* name) {
@@ -82,7 +93,65 @@ public:
 		}
 		this->ticketsBought = ticketNo;
 	}
+
+	void operator=(const User& u)
+	{
+		if (this == &u) {
+			return;
+		}
+
+		delete[] this->name;
+		this->name = new char[strlen(u.name) + 1];
+		strcpy_s(this->name, strlen(u.name) + 1, u.name);
+		this->age = u.age;
+		this->ticketsBought = u.ticketsBought;
+		delete[] this->ticketIds;
+		this->ticketIds = new int[u.ticketsBought];
+		for (int i = 0; i < u.ticketsBought; i++) {
+			this->ticketIds[i] = u.ticketIds[i];
+		}
+	}
 };
 
 int User::noUsers = 0;
 const int User::MIN_ACCEPTED_AGE = 12;
+
+void operator<<(ostream& out, User u) {
+	out << endl << "User info:";
+	out << endl << "ID: " << u.getId();
+	out << endl << "Name: " << u.getName();
+	out << endl << "age: " << u.getAge();
+	out << endl << "Number of tickets bought: " << u.getTicketsBought();
+	if (u.getTicketsBought() > 0) {
+		int* tix = u.getTickets();
+		out << endl << "Ticket IDs: ";
+		for (int i = 0; i < u.getTicketsBought(); i++) {
+			out << tix[i] << " ";
+		}
+	}
+	else {
+		return;
+	}
+}
+
+void operator>>(istream& in, User& u) {
+	cout << endl << "Enter name: ";
+	char input[100];
+	in >> input;
+	delete[] u.getName();
+	u.setName(input);
+	cout << endl << "Enter age: ";
+	int age;
+	in >> age;
+	u.setAge(age);
+	cout << "Enter number of tickets bought: ";
+	int number;
+	in >> number;
+	int* tix = new int[number];
+	delete[] u.getTickets();
+	cout << "Enter ticket IDs: ";
+	for (int i = 0; i < number; i++) {
+		in >> tix[i];
+	}
+	u.setTickets(tix, number);
+}

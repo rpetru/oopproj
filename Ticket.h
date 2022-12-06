@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 
+using namespace std;
+
 enum TicketType {REGULAR, VIP, HIDDEN};
 
 class Ticket {
@@ -9,14 +11,15 @@ private:
 	double price = 0;
 	TicketType type = TicketType::REGULAR;
 	bool valid = 0;
-	static int ticketNo;
+
+	static int noTickets;
 
 public:
-	Ticket() : ticketId(-1) {
+	Ticket() : ticketId(++noTickets) {
 
 	}
 
-	Ticket(double price, TicketType type, bool valid) : ticketId(++ticketNo) {
+	Ticket(double price, TicketType type, bool valid) : ticketId(++noTickets) {
 		this->setPrice(price);
 		this->setType(type);
 		this->setValidation(valid);
@@ -38,6 +41,10 @@ public:
 
 	TicketType getType() {
 		return this->type;
+	}
+
+	int getId() {
+		return this->ticketId;
 	}
 
 	bool isValid() {
@@ -64,6 +71,69 @@ public:
 
 	//applyDiscount(%)
 	//markAsInvitation
+
+	void operator=(const Ticket& t)
+	{
+		if (this == &t) {
+			return;
+		}
+
+		this->price = t.price;
+		this->type = t.type;
+		this->valid = t.valid;;
+	}
 };
 
-int Ticket::ticketNo = 0;
+int Ticket::noTickets = 0;
+
+void operator<<(ostream& out, Ticket t) {
+	out << endl << "Ticket info:";
+	out << endl << "ID: " << t.getId();
+	out << endl << "Price: " << t.getPrice();
+
+	if (t.getType() == TicketType::REGULAR) {
+		out << endl << "Ticket type: regular";
+	}
+	if (t.getType() == TicketType::VIP) {
+		out << endl << "Ticket type: vip";
+	}
+	if (t.getType() == TicketType::HIDDEN) {
+		out << endl << "Ticket type: hidden";
+	}
+	
+
+	if (t.isValid()) {
+		out << endl << "Tiket is valid!";
+	}
+	else {
+		out << endl << "Careful! Ticket is not valid!";
+	}
+}
+
+void operator>>(istream& in, Ticket& t) {
+	cout << endl << "Enter price: ";
+	double price;
+	in >> price;
+	t.setPrice(price);
+	cout << endl << "Enter type (regular, hidden, vip): ";
+	string hi;
+	in >> hi;
+	if (hi == "vip") {
+		t.setType(TicketType::VIP);
+	}
+	else if (hi == "hidden") {
+		t.setType(TicketType::HIDDEN);
+	}
+	else {
+		t.setType(TicketType::REGULAR);
+	}
+	cout << endl << "Is the ticket valid? (y/n) ";
+	in >> hi;
+	if (hi == "y") {
+		t.setValidation(1);
+	}
+	else {
+		t.setValidation(0);
+	}
+	
+}
