@@ -98,13 +98,13 @@ int Ticket::noTickets = 0;
 
 Ticket operator*(Ticket t, double perc) {
 	Ticket result = t;
-	result.price *= perc / 100;
+	result.price += result.price * perc / 100;
 	return result;
 }
 
 Ticket operator*(double perc, Ticket t) {
 	Ticket result = t;
-	result.price *= perc / 100;
+	result.price +=  result.price * perc / 100;
 	return result;
 }
 
