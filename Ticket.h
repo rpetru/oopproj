@@ -69,8 +69,15 @@ public:
 		this->valid = validation;
 	}
 
-	//applyDiscount(%)
-	//markAsInvitation
+	void applyDiscount(int perc) {
+		this->price -= this->price * perc / 100;
+	}
+
+	void markAsInvitation() {
+		this->price = -999;
+		this->type == TicketType::HIDDEN;
+		this->valid = 1;
+	}
 
 	void operator=(const Ticket& t)
 	{
@@ -82,9 +89,24 @@ public:
 		this->type = t.type;
 		this->valid = t.valid;;
 	}
+
+	friend Ticket operator*(Ticket t, double perc);
+	friend Ticket operator*(double perc, Ticket t);
 };
 
 int Ticket::noTickets = 0;
+
+Ticket operator*(Ticket t, double perc) {
+	Ticket result = t;
+	result.price *= perc / 100;
+	return result;
+}
+
+Ticket operator*(double perc, Ticket t) {
+	Ticket result = t;
+	result.price *= perc / 100;
+	return result;
+}
 
 void operator<<(ostream& out, Ticket t) {
 	out << endl << "Ticket info:";
